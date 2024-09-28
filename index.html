@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meme's Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+            background-color: #1e1e1e;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+        .header {
+            background: linear-gradient(90deg, #ff3e00, #ffcc00);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+        .header img {
+            height: 60px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .header img:hover {
+            transform: scale(1.1);
+        }
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(30, 30, 30, 0.8);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 1s ease;
+        }
+        .loader-text {
+            font-size: 2em;
+            color: #ffcc00;
+            margin-bottom: 20px;
+            animation: textAnim 1.5s infinite alternate;
+        }
+        .loader-spinner {
+            border: 8px solid rgba(255, 204, 0, 0.2);
+            border-top: 8px solid #ff3e00;
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes textAnim {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+        .content {
+            padding: 40px 20px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        .content.show {
+            opacity: 1;
+        }
+        .content h1 {
+            margin-bottom: 15px;
+            font-size: 3em;
+            color: #ffcc00; 
+        }
+        .content p {
+            margin-bottom: 25px;
+            font-size: 1.3em;
+            opacity: 0.85;
+        }
+        .videos {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap; 
+            margin-top: 30px;
+        }
+        .video-thumbnail {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            overflow: hidden; 
+            border-radius: 10px;
+            border: 2px solid transparent;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); 
+        }
+        .video-thumbnail:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(255, 204, 0, 0.7); 
+            border: 2px solid #ffcc00; 
+        }
+        .video-thumbnail img {
+            width: 150px;
+            height: auto;
+            border-radius: 10px;
+            transition: filter 0.3s; 
+        }
+        .video-thumbnail img:hover {
+            filter: brightness(0.85); 
+        }
+        .credits {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 1em;
+            color: #ffcc00; 
+        }
+        .idea-button {
+            margin-top: 30px;
+            padding: 12px 25px;
+            background-color: #ff3e00; 
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .idea-button:hover {
+            background-color: #cc3c00; 
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="loader">
+        <div class="loader-text">Caricamento...</div>
+        <div class="loader-spinner"></div>
+    </div>
+    <div class="header">
+        <a href="https://discord.gg/AGfUJtCvhX" target="_blank">
+            <img src="discord.png" alt="Logo Discord">
+        </a>
+    </div>
+    <div class="content" id="mainContent">
+        <h1>Benvenuto nella Meme Hub</h1>
+        <p>Unisciti al nostro server Discord per consigliare meme.</p>
+        <div class="videos" id="videoGallery"></div>
+        <button class="idea-button" onclick="sendIdea()">Invia la tua idea</button>
+        <div class="credits"></div>
+    </div>
+    <script>
+        const youtubeShortsLinks = [
+            "https://www.youtube.com/shorts/m3YoWW-D6FM",
+            "https://www.youtube.com/shorts/vhAjEwptKQ0",
+            "https://www.youtube.com/shorts/MWS-hDRtIlk",
+            "https://www.youtube.com/shorts/draCVwfi0-w",
+            "https://www.youtube.com/shorts/vdhO5iq1IeM",
+            "https://www.youtube.com/shorts/Rmfwrx8z-z4",
+            "https://www.youtube.com/shorts/9ui6IiLr_mM",
+            "https://www.youtube.com/shorts/roAGx2kCv7g",
+            "https://www.youtube.com/shorts/FjeoXXpihnU",
+            "https://www.youtube.com/shorts/PYQ7MuMMxGU",
+            "https://www.youtube.com/shorts/vwBWn-West0",
+            "https://www.youtube.com/shorts/rOx8Lc1AcjQ",
+            "https://www.youtube.com/shorts/ELluwubpdRg",
+            "https://www.youtube.com/shorts/RGPezQ-RkSw",
+            "https://www.youtube.com/shorts/QQFmtgC7T0k",
+            "https://www.youtube.com/shorts/0lrd8keOwJ8",
+            "https://www.youtube.com/shorts/x6B0NX7H_L4",
+            "https://www.youtube.com/shorts/rSF3Wn7pAhI",
+            "https://www.youtube.com/shorts/eif1Q7CnQnY",
+            "https://www.youtube.com/shorts/_2mOQkXD6qA",
+            "https://www.youtube.com/shorts/M4FkyGBVmb8",
+            "https://www.youtube.com/shorts/PYQ7MuMMxGU",
+            "https://www.youtube.com/shorts/vwBWn-West0",
+            "https://www.youtube.com/shorts/rOx8Lc1AcjQ",
+            "https://www.youtube.com/shorts/ELluwubpdRg",
+            "https://www.youtube.com/shorts/RGPezQ-RkSw",
+            "https://www.youtube.com/shorts/QQFmtgC7T0k",
+            "https://www.youtube.com/shorts/0lrd8keOwJ8",
+            "https://www.youtube.com/shorts/draCVwfi0-w",
+            "https://www.youtube.com/shorts/vdhO5iq1IeM",
+            "https://www.youtube.com/shorts/Rmfwrx8z-z4"
+
+        ];
+
+        function getThumbnail(videoId) {
+            return `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+        }
+
+        function setupVideoGallery() {
+            const gallery = document.getElementById("videoGallery");
+            youtubeShortsLinks.forEach(link => {
+                const videoId = link.split('/').pop();
+                const videoThumbnailUrl = getThumbnail(videoId);
+                const videoElement = document.createElement("div");
+                videoElement.className = "video-thumbnail";
+                videoElement.onclick = () => window.open(link, '_blank'); 
+                videoElement.innerHTML = `<img src="${videoThumbnailUrl}" alt="Video ${videoId}">`;
+                gallery.appendChild(videoElement);
+            });
+        }
+
+        async function sendIdea() {
+            const idea = prompt("Scrivi la tua idea (Non Funziona):");
+            if (idea) {
+                await fetch('https://discord.com/api/webhooks/1289321752928845834/0_ca2jfh3Eg0mtir7sHJJEMRBcKPTs-0i1aeooYHhuFOWpGiuMNNbYYBpCRDVbeHgI-T', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ content: idea })
+                });
+                alert("La tua idea è stata inviata!");
+            }
+        }
+
+        window.onload = () => {
+            const loader = document.querySelector(".loader");
+            const mainContent = document.getElementById("mainContent");
+
+            setupVideoGallery();
+            
+            setTimeout(() => {
+                loader.style.display = "none";
+                mainContent.classList.add("show");
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
